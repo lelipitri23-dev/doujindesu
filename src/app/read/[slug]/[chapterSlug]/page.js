@@ -5,7 +5,8 @@ import { ChevronLeft, ChevronRight, List, Home, AlertCircle } from 'lucide-react
 // --- FETCH DATA ---
 async function getChapterData(slug, chapterSlug) {
   try {
-    const res = await fetch(`http://localhost:5000/api/read/${slug}/${chapterSlug}`, { 
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const res = await fetch(`${baseUrl}/api/read/${slug}/${chapterSlug}`, { 
       cache: 'no-store' 
     });
     if (!res.ok) return null;

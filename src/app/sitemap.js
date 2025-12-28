@@ -1,5 +1,5 @@
 export default async function sitemap() {
-  const baseUrl = 'http://localhost:3000'; // Ganti dengan domain asli saat deploy (misal: https://komikcast.com)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'; // Ganti dengan domain asli saat deploy (misal: https://komikcast.com)
 
   // 1. Ambil data manga dari Backend (Minta 1000 data sekaligus)
   let mangas = [];

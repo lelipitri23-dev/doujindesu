@@ -2,7 +2,8 @@ import Navbar from '@/components/Navbar';
 import MangaCard from '@/components/MangaCard';
 
 async function searchManga(query) {
-  const res = await fetch(`http://localhost:5000/api/manga?q=${query}`, { cache: 'no-store' });
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetch(`${baseUrl}/manga?q=${query}`, { cache: 'no-store' });
   return res.json();
 }
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ searchParams }) {
     openGraph: {
       title: title,
       description: `Hasil pencarian komik untuk "${query}" di database kami.`,
-      url: `http://localhost:3000/search${query ? `?q=${encodeURIComponent(query)}` : ''}`, // Ganti dengan domain asli saat deploy
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/search${query ? `?q=${encodeURIComponent(query)}` : ''}`, // Ganti dengan domain asli saat deploy
     },
   };
 }

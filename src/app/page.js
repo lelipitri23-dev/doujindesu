@@ -147,7 +147,7 @@ export default async function Home() {
                 <section>
                     <SectionHeader title="MANHWA UPDATE" icon={BookOpen} link="/type/manhwa" color="border-green-500" />
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {manhwa && manhwa.slice(0, 4).map((manga) => (
+                        {manhwa && manhwa.slice(0, 12).map((manga) => (
                             <MangaCard key={manga._id} manga={manga} />
                         ))}
                     </div>
@@ -192,7 +192,7 @@ export default async function Home() {
                         <span className="w-1 h-4 bg-yellow-500 rounded"></span> Top Weekly
                     </h3>
                     <div className="space-y-2">
-                         {popular.slice(0, 8).map((manga, idx) => (
+                         {popular.slice(0, 12).map((manga, idx) => (
                              <PopularSidebarItem key={manga._id} manga={manga} index={idx} />
                          ))}
                     </div>

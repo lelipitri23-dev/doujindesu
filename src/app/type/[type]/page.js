@@ -6,8 +6,8 @@ import { Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 // --- FETCH DATA ---
 async function getTypeManga(type, page) {
   try {
-    // Panggil API dengan filter type
-    const res = await fetch(`http://localhost:5000/api/manga?type=${type}&page=${page}`, { 
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const res = await fetch(`${baseUrl}/manga?type=${type}&page=${page}`, { 
       cache: 'no-store' 
     });
     if (!res.ok) return { data: [] };
@@ -33,7 +33,7 @@ export async function generateMetadata({ params, searchParams }) {
         openGraph: {
         title: title,
         description: `Filter dan cari komik tipe ${displayType} terlengkap bahasa Indonesia.`,
-        url: `http://localhost:3000/type/${type}${page > 1 ? `?page=${page}` : ''}`, // Ganti dengan domain asli saat deploy
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/type/${type}${page > 1 ? `?page=${page}` : ''}`, // Ganti dengan domain asli saat deploy
         },
     };
 }
