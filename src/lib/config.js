@@ -4,8 +4,8 @@ export const SITE_CONFIG = {
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000',
   
   // SEO & Metadata
-  description: process.env.SITE_DESCRIPTION || 'Baca Komik Online Bahasa Indonesia',
-  keywords: (process.env.SITE_KEYWORDS || 'komik, manga, manhwa').split(', '),
+  description: process.env.SITE_DESCRIPTION || 'Doujindesu adalah website download dan baca doujin bahasa indonesia terbaru dan terlengkap. Kamu bisa membaca berbagai macam doujin secara gratis di Doujindesu!',
+  keywords: (process.env.SITE_KEYWORDS || 'doujindesu, doujinshi, doujindeusu xxx, dojindesu tv, manga, manhwa').split(', '),
   
   // Socials / External Links (Opsional, agar tidak hardcode di component)
   socials: {

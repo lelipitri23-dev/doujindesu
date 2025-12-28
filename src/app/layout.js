@@ -15,7 +15,7 @@ export const metadata = {
   description: SITE_CONFIG.description,
   keywords: SITE_CONFIG.keywords,
   openGraph: {
-    title: `${SITE_CONFIG.name} - Baca Komik Bahasa Indonesia`,
+    title: `${SITE_CONFIG.name} - Baca & Download Doujinshi Bahasa Indonesia`,
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.baseUrl,
     siteName: SITE_CONFIG.name,
