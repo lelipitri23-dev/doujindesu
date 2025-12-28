@@ -37,7 +37,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${manga.title}`,
-    description: `Baca ${manga.metadata?.type || 'komik'} ${manga.title}...`,
+    description: `Baca ${manga.metadata?.type || 'komik'} ${manga.title} bahasa Indonesia lengkap di Doujinshi. ${manga.synopsis ? manga.synopsis.slice(0, 150) + '...' : ''}`,
     openGraph: {
       title: `${manga.title} - ${SITE_CONFIG.name}`,
       url: finalPath,

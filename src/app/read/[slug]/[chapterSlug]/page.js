@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `Baca ${manga.title} ${title} Bahasa Indonesia`,
-    description: `Baca online ${manga.title} chapter ${title} sub indo gratis kualitas tinggi di ${SITE_CONFIG.name}.`,
+    description: `Baca online ${manga.title} chapter ${title} bahasa Indonesia lengkap di Doujinshi. ${SITE_CONFIG.name}.`,
     canonical: `${SITE_CONFIG.baseUrl}/read/${slug}/${chapterSlug}`,
     openGraph: {
       title: `${manga.title} ${title} - ${SITE_CONFIG.name}`,

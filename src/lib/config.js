@@ -1,5 +1,5 @@
 export const SITE_CONFIG = {
-  name: process.env.SITE_NAME || 'Sekaikomik',
+  name: process.env.SITE_NAME || 'Doujindesu',
   baseUrl: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000',
   
