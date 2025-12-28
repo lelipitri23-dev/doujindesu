@@ -2,18 +2,20 @@ import Navbar from '@/components/Navbar';
 import MangaCard from '@/components/MangaCard';
 import Link from 'next/link';
 import { Layers, ChevronLeft, ChevronRight } from 'lucide-react';
+import { SITE_CONFIG } from '@/lib/config'; // Import Config
 
 // --- FETCH DATA ---
 async function getTypeManga(type, page) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const res = await fetch(`${baseUrl}/manga?type=${type}&page=${page}`, { 
+    // Menggunakan API Base URL dari Config
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/manga?type=${type}&page=${page}`, { 
       cache: 'no-store' 
     });
+    
     if (!res.ok) return { data: [] };
     return res.json();
   } catch (e) {
-    console.error(e);
+    console.error("Gagal mengambil data tipe manga:", e);
     return { data: [] };
   }
 }
@@ -22,20 +24,27 @@ async function getTypeManga(type, page) {
 export async function generateMetadata({ params, searchParams }) {
   const { type } = await params;
   const sp = await searchParams;
-    const page = sp.page || 1;
-    // Kapitalisasi tipe untuk judul
-    const displayType = type.charAt(0).toUpperCase() + type.slice(1);
-    let title = `Daftar Komik Tipe ${displayType}`;
-    if (page > 1) title += ` - Halaman ${page}`;
-    return {
+  const page = sp.page || 1;
+  
+  // Kapitalisasi tipe untuk judul (misal: manhwa -> Manhwa)
+  const displayType = type.charAt(0).toUpperCase() + type.slice(1);
+  
+  let title = `Daftar Komik Tipe ${displayType}`;
+  if (page > 1) title += ` - Halaman ${page}`;
+
+  return {
+    title: title,
+    description: `Filter dan cari komik tipe ${displayType} terlengkap bahasa Indonesia.`,
+    openGraph: {
       title: title,
       description: `Filter dan cari komik tipe ${displayType} terlengkap bahasa Indonesia.`,
-        openGraph: {
-        title: title,
-        description: `Filter dan cari komik tipe ${displayType} terlengkap bahasa Indonesia.`,
-        url: `${process.env.NEXT_PUBLIC_SITE_URL}/type/${type}${page > 1 ? `?page=${page}` : ''}`, // Ganti dengan domain asli saat deploy
-        },
-    };
+      // Menggunakan Base URL dari Config untuk konsistensi link
+      url: `${SITE_CONFIG.baseUrl}/type/${type}${page > 1 ? `?page=${page}` : ''}`,
+      siteName: SITE_CONFIG.name,
+      locale: 'id_ID',
+      type: 'website',
+    },
+  };
 }
 
 export default async function TypePage({ params, searchParams }) {
@@ -74,7 +83,7 @@ export default async function TypePage({ params, searchParams }) {
         </div>
 
         {/* HASIL DATA */}
-        {mangas.length > 0 ? (
+        {mangas && mangas.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {mangas.map(manga => (
                     <MangaCard key={manga._id} manga={manga} />
@@ -104,7 +113,7 @@ export default async function TypePage({ params, searchParams }) {
                 {page}
             </span>
 
-            {mangas.length >= 20 && (
+            {mangas && mangas.length >= 20 && (
                 <Link 
                     href={`/type/${type}?page=${page + 1}`} 
                     className="bg-card border border-gray-700 hover:border-primary text-white px-4 py-2 rounded flex items-center gap-1 transition"

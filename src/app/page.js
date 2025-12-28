@@ -3,34 +3,39 @@ import MangaCard from '@/components/MangaCard';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Flame, Clock, BookOpen, Star, Palette } from 'lucide-react';
+import { SITE_CONFIG } from '@/lib/config'; // Import konfigurasi terpusat
 
 // --- DATA FETCHING ---
 async function getHomeData() {
   try {
-    const ENV = process.env;
-    const res = await fetch(`${ENV.NEXT_PUBLIC_API_BASE_URL}/home`, { 
+    // Menggunakan API Base URL dari Config
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/home`, { 
       cache: 'no-store' 
     });
+    
     if (!res.ok) throw new Error('Fetch failed');
     return res.json();
   } catch (e) {
-    console.error(e);
+    console.error("Error fetching home data:", e);
     return { success: false, data: null };
   }
 }
 
 async function getGenres() {
   try {
-    const env = process.env;
-    const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/genres`, { cache: 'no-store' });
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/genres`, { 
+      cache: 'no-store' 
+    });
     if (!res.ok) return { data: [] };
     return res.json();
-  } catch (e) { return { data: [] }; }
+  } catch (e) { 
+    return { data: [] }; 
+  }
 }
 
 // --- HELPER COMPONENTS ---
 
-// Judul Section yang Keren
+// 1. Judul Section yang Keren
 const SectionHeader = ({ title, icon: Icon, link, color = "border-primary" }) => (
   <div className="flex items-center justify-between mb-4 border-b border-gray-700 pb-2">
     <h2 className="text-lg md:text-xl font-bold text-white flex items-center gap-2 uppercase">
@@ -45,7 +50,7 @@ const SectionHeader = ({ title, icon: Icon, link, color = "border-primary" }) =>
   </div>
 );
 
-// Sidebar Item (Popular List)
+// 2. Sidebar Item (Popular List)
 const PopularSidebarItem = ({ manga, index }) => (
   <div className="flex gap-3 items-center border-b border-gray-800 pb-3 last:border-0 group">
     <div className={`
@@ -89,11 +94,12 @@ export default async function Home() {
   const homeRes = await getHomeData();
   const genreRes = await getGenres();
 
+  // Error Handling UI
   if (!homeRes.data) {
     return (
       <div className="min-h-screen bg-dark text-white flex flex-col items-center justify-center p-4">
         <h1 className="text-2xl font-bold mb-2">Gagal Memuat Data</h1>
-        <p className="text-gray-400">Pastikan Backend berjalan di port 5000</p>
+        <p className="text-gray-400">Pastikan Backend berjalan di {SITE_CONFIG.apiBaseUrl}</p>
       </div>
     );
   }
@@ -198,8 +204,13 @@ export default async function Home() {
                     </div>
                 </div>
 
-                {/* Widget: Discord (Static) */}
-                <a href="#" className="block relative h-24 rounded-lg overflow-hidden group shadow-lg">
+                {/* Widget: Discord (Menggunakan Link dari Config) */}
+                <a 
+                  href={SITE_CONFIG.socials.discord || '#'} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block relative h-24 rounded-lg overflow-hidden group shadow-lg"
+                >
                     <div className="absolute inset-0 bg-[#5865F2] flex items-center justify-center group-hover:bg-[#4752c4] transition">
                         <span className="font-bold text-white flex items-center gap-2">
                             <span className="bg-white text-[#5865F2] p-1 rounded-full text-xs">JOIN</span> DISCORD SERVER

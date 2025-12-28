@@ -1,11 +1,12 @@
-export default async function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'; // Ganti dengan domain asli saat deploy (misal: https://komikcast.com)
+import { SITE_CONFIG } from '@/lib/config';
 
-  // 1. Ambil data manga dari Backend (Minta 1000 data sekaligus)
+export default async function sitemap() {
+  const baseUrl = SITE_CONFIG.baseUrl;
+
+  // 1. Ambil data manga dari Backend
   let mangas = [];
   try {
-    const env = process.env;
-    const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/manga?limit=1000`, {
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/manga?limit=1000`, {
         cache: 'no-store'
     });
     const json = await res.json();
@@ -14,7 +15,7 @@ export default async function sitemap() {
     console.error("Gagal generate sitemap manga:", e);
   }
 
-  // 2. Buat URL Dinamis untuk setiap Manga
+  // 2. Buat URL Dinamis
   const mangaUrls = mangas.map((manga) => ({
     url: `${baseUrl}/manga/${manga.slug}`,
     lastModified: new Date(manga.updatedAt || new Date()),
@@ -22,34 +23,15 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  // 3. URL Statis (Halaman tetap)
-  const staticUrls = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'always',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/list`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/type/manhwa`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/type/manhua`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-  ];
+  // 3. URL Statis
+  const staticRoutes = ['', '/list', '/type/manhwa', '/type/manhua'];
+  
+  const staticUrls = staticRoutes.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: route === '' ? 'always' : 'daily',
+    priority: route === '' ? 1 : 0.8,
+  }));
 
-  // Gabungkan semua URL
   return [...staticUrls, ...mangaUrls];
 }

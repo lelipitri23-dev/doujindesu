@@ -1,24 +1,24 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/Footer';
+import { SITE_CONFIG } from '@/lib/config'; // Import config
 
 const inter = Inter({ subsets: ['latin'] });
-const env = process.env;
 
 // --- KONFIGURASI SEO GLOBAL ---
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'), // Ganti dengan domain aslimu nanti (misal: https://komikcast.com)
+  metadataBase: new URL(SITE_CONFIG.baseUrl),
   title: {
-    default: `${process.env.SITE_NAME || 'Doujindesu'}`,
-    template: `%s | ${process.env.SITE_NAME || 'Doujindesu'}`,
+    default: SITE_CONFIG.name,
+    template: `%s | ${SITE_CONFIG.name}`,
   },
-  description: 'Baca Manga, Manhwa, dan Manhua Bahasa Indonesia terlengkap dan terupdate. Gratis dan tanpa iklan yang mengganggu.',
-  keywords: ['baca komik', 'manga indonesia', 'manhwa sub indo', 'komikcast', 'komik gratis'],
+  description: SITE_CONFIG.description,
+  keywords: SITE_CONFIG.keywords,
   openGraph: {
-    title: `${process.env.SITE_NAME || 'Doujindesu'} - Baca Komik Bahasa Indonesia`,
-    description: 'Baca Manga, Manhwa, dan Manhua Bahasa Indonesia terlengkap.',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}`,
-    siteName: `${process.env.SITE_NAME || 'Doujindesu'}`,
+    title: `${SITE_CONFIG.name} - Baca Komik Bahasa Indonesia`,
+    description: SITE_CONFIG.description,
+    url: SITE_CONFIG.baseUrl,
+    siteName: SITE_CONFIG.name,
     locale: 'id_ID',
     type: 'website',
   },

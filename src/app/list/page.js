@@ -1,12 +1,15 @@
 import Navbar from '@/components/Navbar';
 import MangaCard from '@/components/MangaCard';
 import Link from 'next/link';
-import { Filter, ChevronLeft, ChevronRight, Tag, Layers } from 'lucide-react';
+import { Filter, ChevronLeft, ChevronRight, Tag } from 'lucide-react';
+import { SITE_CONFIG } from '@/lib/config'; // Import Config
 
 // --- FETCH DATA ---
 async function getMangaList(page, status, type, genre, q) {
   try {
-    const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+    // Menggunakan API Base URL dari Config
+    const BASE_URL = SITE_CONFIG.apiBaseUrl;
+    
     let url = `${BASE_URL}/manga?page=${page}`;
     if (status) url += `&status=${status}`;
     if (type) url += `&type=${type}`;
@@ -17,23 +20,24 @@ async function getMangaList(page, status, type, genre, q) {
     if (!res.ok) return { data: [] };
     return res.json();
   } catch (e) {
-    console.error(e);
+    console.error("Gagal mengambil daftar manga:", e);
     return { data: [] };
   }
 }
 
 async function getGenres() {
   try {
-    const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-    const res = await fetch(`${BASE_URL}/genres`, { cache: 'no-store' });
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/genres`, { cache: 'no-store' });
     if (!res.ok) return { data: [] };
     return res.json();
-  } catch (e) { return { data: [] }; }
+  } catch (e) { 
+    return { data: [] }; 
+  }
 }
 
 // --- GENERATE METADATA (SEO & OG:URL FIX) ---
 export async function generateMetadata({ searchParams }) {
-  const sp = await searchParams; // Await params (Next.js 15+)
+  const sp = await searchParams;
   
   // Ambil variable
   const type = sp.type || 'Komik';
@@ -46,7 +50,7 @@ export async function generateMetadata({ searchParams }) {
   let title = q || `Daftar ${type} ${genre} ${status}`.trim().replace(/\s+/g, ' ');
   if (page > 1) title += ` - Halaman ${page}`;
 
-  // 2. Buat URL Lengkap (Query String) untuk og:url & canonical
+  // 2. Buat URL Lengkap untuk SEO (Harus Absolute URL)
   const urlParams = new URLSearchParams();
   if (sp.page && sp.page > 1) urlParams.set('page', sp.page);
   if (sp.status) urlParams.set('status', sp.status);
@@ -55,20 +59,22 @@ export async function generateMetadata({ searchParams }) {
   if (sp.q) urlParams.set('q', sp.q);
 
   const queryString = urlParams.toString();
-  // Hasilnya misal: /list?page=2&type=Doujinshi&genre=Ahegao
-  const finalPath = `/list${queryString ? `?${queryString}` : ''}`;
+  const relativePath = `/list${queryString ? `?${queryString}` : ''}`;
+  const absoluteUrl = `${SITE_CONFIG.baseUrl}${relativePath}`; // Gabungkan dengan domain utama
 
   return {
     title: title,
-    description: `Filter dan cari komik ${title} terlengkap bahasa Indonesia.`,
+    description: `Filter dan cari komik ${title} terlengkap bahasa Indonesia di ${SITE_CONFIG.name}.`,
     openGraph: {
       title: title,
-      description: `Baca dan cari ${title} di Doujindesu.`,
-      url: finalPath, // <--- INI AKAN MENJADI URL LENGKAP
+      description: `Baca dan cari ${title} di ${SITE_CONFIG.name}.`,
+      url: absoluteUrl,
+      siteName: SITE_CONFIG.name,
+      locale: 'id_ID',
       type: 'website',
     },
     alternates: {
-        canonical: finalPath, // Bagus untuk SEO Google
+        canonical: absoluteUrl,
     }
   };
 }
@@ -96,8 +102,13 @@ export default async function MangaListPage({ searchParams }) {
   const genre = params.genre || '';
   const q = params.q || '';
 
-  const { data: mangas } = await getMangaList(page, status, type, genre, q);
-  const genreRes = await getGenres();
+  // Fetch Data secara paralel agar lebih cepat
+  const [mangaRes, genreRes] = await Promise.all([
+    getMangaList(page, status, type, genre, q),
+    getGenres()
+  ]);
+
+  const mangas = mangaRes.data || [];
   const allGenres = genreRes.data || [];
 
   // Helper URL Builder
@@ -105,7 +116,10 @@ export default async function MangaListPage({ searchParams }) {
       const newParams = new URLSearchParams(params);
       if (value === 'all' || !value) newParams.delete(key);
       else newParams.set(key, value);
-      if (key !== 'page') newParams.delete('page');
+      
+      // Reset page ke 1 setiap kali filter berubah
+      newParams.delete('page');
+      
       return `/list?${newParams.toString()}`;
   };
 
@@ -123,6 +137,8 @@ export default async function MangaListPage({ searchParams }) {
             
             {/* KONTEN UTAMA */}
             <div className="min-w-0">
+                
+                {/* FILTER BOX */}
                 <div className="bg-card p-6 rounded-lg border border-gray-800 mb-8 shadow-lg">
                     <div className="flex items-center gap-2 mb-6 border-b border-gray-700 pb-4">
                         <Filter className="text-primary" />
@@ -130,6 +146,7 @@ export default async function MangaListPage({ searchParams }) {
                     </div>
 
                     <div className="space-y-4">
+                        {/* Filter Status */}
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="text-xs text-gray-500 font-bold w-16">STATUS:</span>
                             <FilterButton label="ALL" active={!status} href={buildUrl('status', 'all')} />
@@ -137,6 +154,7 @@ export default async function MangaListPage({ searchParams }) {
                             <FilterButton label="FINISHED" active={status === 'Finished'} href={buildUrl('status', 'finished')} />
                         </div>
 
+                        {/* Filter Type */}
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="text-xs text-gray-500 font-bold w-16">TYPE:</span>
                             <FilterButton label="ALL" active={!type} href={buildUrl('type', 'all')} />
@@ -147,6 +165,7 @@ export default async function MangaListPage({ searchParams }) {
                     </div>
                 </div>
 
+                {/* HASIL DATA */}
                 {mangas.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {mangas.map(manga => (
@@ -162,6 +181,7 @@ export default async function MangaListPage({ searchParams }) {
                     </div>
                 )}
 
+                {/* PAGINATION */}
                 <div className="flex justify-center gap-2 mt-12">
                     {page > 1 && (
                         <Link 
