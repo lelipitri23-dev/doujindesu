@@ -1,19 +1,60 @@
 'use client';
-import useBookmark from '@/hooks/useBookmark';
+
+import { useState, useEffect } from 'react';
 import { Bookmark } from 'lucide-react';
 
 export default function BookmarkButton({ manga }) {
-  const { isBookmarked, toggleBookmark } = useBookmark(manga);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    // Cek apakah sudah di-bookmark saat load
+    if (typeof window !== 'undefined') {
+        const bookmarks = JSON.parse(localStorage.getItem('komik_bookmarks') || '[]');
+        const exists = bookmarks.some(b => b.slug === manga.slug);
+        setIsBookmarked(exists);
+    }
+  }, [manga.slug]);
+
+  const toggleBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem('komik_bookmarks') || '[]');
+    
+    if (isBookmarked) {
+        // Hapus dari bookmark
+        const newBookmarks = bookmarks.filter(b => b.slug !== manga.slug);
+        localStorage.setItem('komik_bookmarks', JSON.stringify(newBookmarks));
+        setIsBookmarked(false);
+    } else {
+        // Tambah ke bookmark
+        // Normalisasi data agar konsisten
+        const dataToSave = {
+            title: manga.title,
+            slug: manga.slug,
+            thumb: manga.thumb,
+            // Ambil dari root ATAU metadata
+            type: manga.type || manga.metadata?.type || 'Manga',     
+            rating: manga.rating || manga.metadata?.rating || '?',   
+            status: manga.status || manga.metadata?.status || 'Unknown',
+            // Simpan info chapter terakhir jika ada
+            last_chapter: manga.latestChapter || manga.last_chapter || null, 
+        };
+
+        const newBookmarks = [...bookmarks, dataToSave];
+        localStorage.setItem('komik_bookmarks', JSON.stringify(newBookmarks));
+        setIsBookmarked(true);
+    }
+  };
 
   return (
     <button 
-      onClick={toggleBookmark}
-      className={`w-full font-bold py-3 px-4 rounded mt-4 transition flex items-center justify-center gap-2 ${
-        isBookmarked ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-blue-600'
-      }`}
+        onClick={toggleBookmark}
+        className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition shadow-lg border ${
+            isBookmarked 
+            ? 'bg-red-600 hover:bg-red-700 text-white border-red-500' 
+            : 'bg-primary hover:bg-blue-600 text-white border-blue-400'
+        }`}
     >
-      <Bookmark className="w-4 h-4" fill={isBookmarked ? "white" : "none"} />
-      {isBookmarked ? 'TERSIMPAN' : 'BOOKMARK'}
+        <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
+        {isBookmarked ? 'DI BOOKMARK' : 'BOOKMARK'}
     </button>
   );
 }

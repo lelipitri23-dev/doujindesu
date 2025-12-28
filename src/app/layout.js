@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   metadataBase: new URL(SITE_CONFIG.baseUrl),
   title: {
-    default: SITE_CONFIG.name,
+    default: `${SITE_CONFIG.name} - Baca & Download Doujinshi Bahasa Indonesia`,
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,

@@ -163,7 +163,7 @@ export default async function Home() {
                 <section>
                     <SectionHeader title="DOUJINSHI UPDATE" icon={Palette} link="/type/doujinshi" color="border-pink-500" />
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                        {doujinshi && doujinshi.slice(0, 4).map((manga) => (
+                        {doujinshi && doujinshi.slice(0, 12).map((manga) => (
                             <MangaCard key={manga._id} manga={manga} />
                         ))}
                     </div>
