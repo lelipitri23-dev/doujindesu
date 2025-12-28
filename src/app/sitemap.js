@@ -24,7 +24,7 @@ export default async function sitemap() {
   }));
 
   // 3. URL Statis
-  const staticRoutes = ['', '/list', '/type/manhwa', '/type/manhua'];
+  const staticRoutes = ['', '/list', '/type/manhwa', '/type/manga', '/type/doujinshi'];
   
   const staticUrls = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
