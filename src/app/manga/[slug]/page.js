@@ -70,7 +70,7 @@ export default async function MangaDetail({ params }) {
     return (
       <main className="min-h-screen bg-dark">
         <Navbar />
-        <div className="container mx-auto px-4 py-20 text-center flex flex-col items-center justify-center h-[60vh]">
+        <div className="w-full mx-auto px-4 py-20 text-center flex flex-col items-center justify-center h-[60vh]">
           <AlertCircle size={64} className="text-red-500 mb-4 opacity-80" />
           <h1 className="text-2xl font-bold text-white mb-2">Komik Tidak Ditemukan</h1>
           <Link href="/" className="mt-8 bg-primary hover:bg-blue-600 text-white px-6 py-3 rounded-full font-bold transition text-sm">

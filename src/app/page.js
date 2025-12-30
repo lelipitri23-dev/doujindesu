@@ -128,7 +128,7 @@ export default async function Home() {
 
                         <SectionHeader title="POPULAR TODAY" icon={Flame} color="border-red-500" />
                         
-                        {/* Slider Container */}
+                        {/* Slider w-full */}
                         <div className="flex overflow-x-auto gap-4 pb-2 snap-x custom-scrollbar">
                             {popular.slice(0, 10).map((manga) => (
                                 <div key={manga._id} className="w-[140px] md:w-[160px] flex-shrink-0 snap-start">

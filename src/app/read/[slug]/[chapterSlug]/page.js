@@ -139,8 +139,8 @@ export default async function ReadPage({ params }) {
           </div>
       </div>
 
-      {/* CONTAINER UTAMA */}
-      {/* UPDATE: Container diganti w-full, padding disesuaikan */}
+      {/* w-full UTAMA */}
+      {/* UPDATE: w-full diganti w-full, padding disesuaikan */}
       <div className="w-full px-0 lg:px-6 flex justify-center lg:justify-between gap-6 relative">
           
           {/* === KOLOM KIRI (READER) === */}

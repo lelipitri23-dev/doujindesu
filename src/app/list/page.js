@@ -132,7 +132,7 @@ export default async function MangaListPage({ searchParams }) {
     <main className="min-h-screen bg-dark pb-20 font-sans">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
             
             {/* KONTEN UTAMA */}

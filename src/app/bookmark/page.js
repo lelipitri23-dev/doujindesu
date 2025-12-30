@@ -32,7 +32,7 @@ export default function BookmarkPage() {
     <main className="min-h-screen bg-dark pb-20 font-sans">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="w-full mx-auto px-4 py-8">
         
         {/* HEADER SECTION */}
         <div className="bg-card p-6 rounded-lg border border-gray-800 mb-8 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
