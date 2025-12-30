@@ -112,7 +112,7 @@ export default async function Home() {
     <main className="min-h-screen bg-dark pb-20 font-sans">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="flex-grow w-full pt-6 md:pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
             
             {/* === KOLOM KIRI (KONTEN UTAMA) === */}

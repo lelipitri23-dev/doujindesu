@@ -3,10 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import BookmarkButton from '@/components/BookmarkButton';
 import MangaCard from '@/components/MangaCard';
-import ChapterList from '@/components/ChapterList'; // <--- IMPORT KOMPONEN BARU
+import ChapterList from '@/components/ChapterList';
 import { Calendar, User, BookOpen, Star, AlertCircle, List, Tag, Eye, Heart } from 'lucide-react';
 import { SITE_CONFIG } from '@/lib/config';
-import ShareSidebar from '@/components/ShareSidebar'; // <--- Tambahkan ini
+import ShareSidebar from '@/components/ShareSidebar';
 
 // --- FETCH DATA ---
 async function getMangaDetail(slug) {
@@ -102,21 +102,38 @@ export default async function MangaDetail({ params }) {
         />
       </div>
 
-      <div className="container mx-auto px-4 -mt-60 relative z-20">
+      {/* PERUBAHAN DISINI: 
+          1. Menghapus 'container' dan 'mx-auto'
+          2. Menambahkan 'w-full'
+          3. Menambahkan 'lg:px-10' agar di layar besar tidak terlalu mepet pinggir
+      */}
+      <div className="w-full px-4 lg:px-10 -mt-60 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-10">
 
           {/* === KOLOM KIRI (KONTEN UTAMA) === */}
           <div className="space-y-10">
 
-            {/* 1. HEADER INFO (Tetap Sama) */}
+            {/* 1. HEADER INFO */}
             <div className="flex flex-col md:flex-row gap-8">
-              <div className="w-full md:w-[260px] flex-shrink-0 flex flex-col gap-4">
+
+              {/* UBAH BAGIAN INI: Kurangi width (w-...) dan tambahkan mx-auto agar tengah di mobile */}
+              <div className="w-[160px] md:w-[220px] mx-auto md:mx-0 flex-shrink-0 flex flex-col gap-4">
+
                 <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-gray-700/50 group">
-                  <Image src={manga.thumb} fill className="object-cover" alt={manga.title} unoptimized />
+                  <Image
+                    src={manga.thumb}
+                    fill
+                    className="object-cover"
+                    alt={manga.title}
+                    unoptimized
+                  />
+
+                  {/* Label Type */}
                   <span className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded shadow-md uppercase">
                     {manga.metadata?.type || 'Manga'}
                   </span>
                 </div>
+
                 <BookmarkButton manga={manga} />
               </div>
 
@@ -141,7 +158,7 @@ export default async function MangaDetail({ params }) {
                   </div>
                   <div className={`px-4 py-2 rounded-lg flex items-center gap-2 font-bold text-sm
                                 ${manga.metadata?.status === 'Finished' ? 'bg-green-600/20 text-green-400 border border-green-600/50' : 'bg-blue-600/20 text-blue-400 border border-blue-600/50'}
-                             `}>
+                              `}>
                     <span className={`w-2 h-2 rounded-full ${manga.metadata?.status === 'Finished' ? 'bg-green-400' : 'bg-blue-400'}`}></span>
                     {manga.metadata?.status || 'Unknown'}
                   </div>
@@ -156,7 +173,7 @@ export default async function MangaDetail({ params }) {
               </div>
             </div>
 
-            {/* 2. SINOPSIS (Tetap Sama) */}
+            {/* 2. SINOPSIS */}
             <div className="bg-card p-6 rounded-xl border border-gray-800 shadow-lg">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2 border-b border-gray-800 pb-3">
                 <BookOpen className="text-primary" size={20} /> SINOPSIS
@@ -173,14 +190,14 @@ export default async function MangaDetail({ params }) {
               </div>
             </div>
 
-            {/* 3. CHAPTER LIST (DIGANTI DENGAN KOMPONEN BARU) */}
+            {/* 3. CHAPTER LIST */}
             <ChapterList
               chapters={chapters}
               slug={manga.slug}
               updatedAt={manga.updatedAt}
             />
 
-            {/* 4. REKOMENDASI (Tetap Sama) */}
+            {/* 4. REKOMENDASI */}
             {recommendations.length > 0 && (
               <section className="bg-card p-6 rounded-xl border border-gray-800 shadow-lg">
                 <div className="flex items-center gap-2 mb-6 border-b border-gray-800 pb-4">
@@ -190,7 +207,7 @@ export default async function MangaDetail({ params }) {
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4"> {/* Adjusted grid for full width */}
                   {recommendations.map(item => (
                     <MangaCard key={item._id} manga={item} />
                   ))}
@@ -203,7 +220,6 @@ export default async function MangaDetail({ params }) {
 
           {/* === SIDEBAR KANAN === */}
           <aside className="space-y-8">
-            {/* Widget Share (Komponen Baru) */}
             <ShareSidebar manga={manga} />
           </aside>
 
