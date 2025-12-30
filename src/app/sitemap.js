@@ -6,7 +6,7 @@ export default async function sitemap() {
   // 1. Ambil data manga dari Backend
   let mangas = [];
   try {
-    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/manga?limit=1000`, {
+    const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/manga?limit=24`, {
         cache: 'no-store'
     });
     const json = await res.json();
@@ -24,7 +24,7 @@ export default async function sitemap() {
   }));
 
   // 3. URL Statis
-  const staticRoutes = ['', '/list', '/type/manhwa', '/type/manga', '/type/doujinshi'];
+  const staticRoutes = ['', '/list', '/type/manhwa', '/type/manga', '/type/doujinshi,', '/bookmarks', '/search'];
   
   const staticUrls = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
