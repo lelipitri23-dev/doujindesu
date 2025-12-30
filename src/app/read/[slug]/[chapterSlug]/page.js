@@ -2,10 +2,9 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, List, Home, AlertCircle } from 'lucide-react';
 import { SITE_CONFIG } from '@/lib/config';
-import ChapterMenu from '@/components/ChapterMenu'; // <--- IMPORT BARU
+import ChapterMenu from '@/components/ChapterMenu'; 
 
 // --- FETCH DATA ---
-
 async function getChapterData(slug, chapterSlug) {
   try {
     const res = await fetch(`${SITE_CONFIG.apiBaseUrl}/read/${slug}/${chapterSlug}`, { 
@@ -55,39 +54,40 @@ export async function generateMetadata({ params }) {
 }
 
 // --- KOMPONEN: NAVIGASI ---
+// UPDATE: Padding diperkecil (p-3), Font diperkecil (text-xs/sm)
 const ChapterNavigation = ({ prev, next, mangaSlug }) => (
-  <div className="bg-card p-4 rounded-lg border border-gray-800 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 mb-6 shadow-lg">
+  <div className="bg-card p-3 rounded-lg border border-gray-800 flex flex-wrap md:flex-nowrap items-center justify-between gap-3 mb-6 shadow-lg">
       <Link 
         href={`/manga/${mangaSlug}`} 
-        className="bg-darker hover:bg-gray-700 border border-gray-700 text-white px-5 py-2.5 rounded font-bold flex items-center gap-2 transition w-full md:w-auto justify-center"
+        className="bg-darker hover:bg-gray-700 border border-gray-700 text-white px-4 py-2 rounded font-bold flex items-center gap-2 transition w-full md:w-auto justify-center text-xs"
       >
-         <List size={20}/> <span className="text-sm">Info Manga</span>
+         <List size={16}/> <span>Info Manga</span>
       </Link>
 
       <div className="flex items-center gap-2 w-full md:w-auto justify-center">
           {prev ? (
              <Link 
                href={`/read/${mangaSlug}/${prev}`} 
-               className="bg-[#3b82f6] hover:bg-blue-600 text-white px-6 py-2.5 rounded font-bold flex items-center gap-1 transition shadow-md flex-1 md:flex-none justify-center"
+               className="bg-[#3b82f6] hover:bg-blue-600 text-white px-5 py-2 rounded font-bold flex items-center gap-1 transition shadow-md flex-1 md:flex-none justify-center text-xs"
              >
-                <ChevronLeft size={20}/> Prev
+                <ChevronLeft size={16}/> Prev
              </Link>
           ) : (
-             <button disabled className="bg-gray-700 text-gray-400 px-6 py-2.5 rounded font-bold flex items-center gap-1 cursor-not-allowed opacity-50 flex-1 md:flex-none justify-center">
-                <ChevronLeft size={20}/> Prev
+             <button disabled className="bg-gray-700 text-gray-400 px-5 py-2 rounded font-bold flex items-center gap-1 cursor-not-allowed opacity-50 flex-1 md:flex-none justify-center text-xs">
+                <ChevronLeft size={16}/> Prev
              </button>
           )}
 
           {next ? (
              <Link 
                href={`/read/${mangaSlug}/${next}`} 
-               className="bg-[#3b82f6] hover:bg-blue-600 text-white px-6 py-2.5 rounded font-bold flex items-center gap-1 transition shadow-md flex-1 md:flex-none justify-center"
+               className="bg-[#3b82f6] hover:bg-blue-600 text-white px-5 py-2 rounded font-bold flex items-center gap-1 transition shadow-md flex-1 md:flex-none justify-center text-xs"
              >
-                Next <ChevronRight size={20}/>
+                Next <ChevronRight size={16}/>
              </Link>
           ) : (
-             <button disabled className="bg-gray-700 text-gray-400 px-6 py-2.5 rounded font-bold flex items-center gap-1 cursor-not-allowed opacity-50 flex-1 md:flex-none justify-center">
-                Next <ChevronRight size={20}/>
+             <button disabled className="bg-gray-700 text-gray-400 px-5 py-2 rounded font-bold flex items-center gap-1 cursor-not-allowed opacity-50 flex-1 md:flex-none justify-center text-xs">
+                Next <ChevronRight size={16}/>
              </button>
           )}
       </div>
@@ -109,8 +109,8 @@ export default async function ReadPage({ params }) {
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
           <AlertCircle size={64} className="mb-4 text-red-500" />
-          <h1 className="text-2xl font-bold text-white">Chapter Tidak Ditemukan</h1>
-          <Link href="/" className="bg-primary text-white px-6 py-3 rounded mt-6 inline-block">Kembali ke Home</Link>
+          <h1 className="text-xl font-bold text-white">Chapter Tidak Ditemukan</h1>
+          <Link href="/" className="bg-primary text-white px-6 py-2 rounded mt-6 inline-block text-sm">Kembali ke Home</Link>
         </div>
       </main>
     );
@@ -125,50 +125,53 @@ export default async function ReadPage({ params }) {
       <Navbar />
 
       {/* HEADER */}
-      <div className="bg-card border-b border-gray-800 py-6 mb-6 shadow-md relative z-10">
-          <div className="container mx-auto px-4">
-              <div className="flex items-center gap-2 text-xs text-gray-400 mb-2 uppercase">
+      {/* UPDATE: py dikurangi, text judul diperkecil */}
+      <div className="bg-card border-b border-gray-800 py-4 mb-4 shadow-md relative z-10">
+          <div className="w-full px-4 lg:px-8"> {/* Full width dengan sedikit padding */}
+              <div className="flex items-center gap-2 text-[10px] md:text-xs text-gray-400 mb-1 uppercase">
                   <Link href="/" className="hover:text-primary"><Home size={12}/></Link> /
                   <Link href={`/manga/${slug}`} className="hover:text-primary line-clamp-1">{data.manga.title}</Link> /
-                  <span className="text-primary font-bold">Chapter {data.title}</span>
+                  <span className="text-primary font-bold">Ch. {data.title}</span>
               </div>
-              <h1 className="text-lg md:text-2xl font-bold text-white leading-tight">
+              <h1 className="text-base md:text-lg font-bold text-white leading-tight">
                   {data.manga.title} <span className="text-primary">Chapter {data.title}</span>
               </h1>
           </div>
       </div>
 
-      {/* CONTAINER */}
-      <div className="container mx-auto px-0 lg:px-4 flex justify-center lg:justify-between gap-6 relative">
+      {/* CONTAINER UTAMA */}
+      {/* UPDATE: Container diganti w-full, padding disesuaikan */}
+      <div className="w-full px-0 lg:px-6 flex justify-center lg:justify-between gap-6 relative">
           
           {/* === KOLOM KIRI (READER) === */}
-          <div className="w-full lg:w-[calc(100%-340px)] min-w-0">
+          <div className="w-full lg:w-[calc(100%-300px)] min-w-0">
             
-            <div className="px-4 lg:px-0">
+            <div className="px-4 lg:px-0 max-w-5xl mx-auto w-full"> {/* Navigasi dibatasi lebarnya agar rapi */}
                 <ChapterNavigation prev={prev_slug} next={next_slug} mangaSlug={slug} />
             </div>
 
-            {/* GAMBAR */}
+            {/* GAMBAR READER */}
+            {/* UPDATE: Gambar bisa lebih lebar sekarang */}
             <div className="bg-black shadow-2xl min-h-screen w-full mx-auto rounded-none lg:rounded-xl overflow-hidden border-y lg:border border-gray-800/50">
                 {data.images && data.images.map((imgUrl, index) => (
-                    <div key={index} className="w-full">
+                    <div key={index} className="w-full flex justify-center bg-[#111]">
                         <img 
                             src={imgUrl} 
                             alt={`${data.title} - ${index + 1}`} 
-                            className="w-full h-auto block mx-auto md:max-w-4xl"
+                            // max-w-5xl agar di layar lebar banget gambarnya ga pecah/terlalu gede
+                            className="w-full h-auto block max-w-4xl" 
                             loading="lazy" 
                         />
                     </div>
                 ))}
             </div>
 
-            <div className="mt-8 px-4 lg:px-0">
+            <div className="mt-8 px-4 lg:px-0 max-w-5xl mx-auto w-full">
                 <ChapterNavigation prev={prev_slug} next={next_slug} mangaSlug={slug} />
             </div>
           </div>
 
           {/* === KOLOM KANAN (MENU DINAMIS) === */}
-          {/* Komponen ini menangani Sidebar Desktop DAN Menu Mobile */}
           <ChapterMenu 
               chapters={allChapters} 
               currentSlug={chapterSlug}

@@ -25,16 +25,13 @@ export default function BookmarkButton({ manga }) {
         setIsBookmarked(false);
     } else {
         // Tambah ke bookmark
-        // Normalisasi data agar konsisten
         const dataToSave = {
             title: manga.title,
             slug: manga.slug,
             thumb: manga.thumb,
-            // Ambil dari root ATAU metadata
             type: manga.type || manga.metadata?.type || 'Manga',     
             rating: manga.rating || manga.metadata?.rating || '?',   
             status: manga.status || manga.metadata?.status || 'Unknown',
-            // Simpan info chapter terakhir jika ada
             last_chapter: manga.latestChapter || manga.last_chapter || null, 
         };
 
@@ -47,13 +44,14 @@ export default function BookmarkButton({ manga }) {
   return (
     <button 
         onClick={toggleBookmark}
-        className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition shadow-lg border ${
+        className={`w-full py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-md border ${
             isBookmarked 
             ? 'bg-red-600 hover:bg-red-700 text-white border-red-500' 
             : 'bg-primary hover:bg-blue-600 text-white border-blue-400'
         }`}
     >
-        <Bookmark size={20} fill={isBookmarked ? "currentColor" : "none"} />
+        {/* Ukuran icon diperkecil ke 16 */}
+        <Bookmark size={16} fill={isBookmarked ? "currentColor" : "none"} />
         {isBookmarked ? 'DI BOOKMARK' : 'BOOKMARK'}
     </button>
   );
