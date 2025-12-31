@@ -196,7 +196,7 @@ export default async function MangaListPage({ searchParams }) {
                         {page}
                     </span>
 
-                    {mangas.length >= 20 && (
+                    {mangas.length >= 24 && (
                         <Link 
                             href={`/list?page=${page + 1}&status=${status}&type=${type}&genre=${genre}&q=${q}`} 
                             className="bg-card border border-gray-700 hover:border-primary text-white px-4 py-2 rounded flex items-center gap-1 transition"

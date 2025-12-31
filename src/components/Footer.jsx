@@ -91,8 +91,8 @@ export default function Footer() {
                 &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. Made with <Heart size={14} className="text-red-500 fill-red-500" />
             </p>
         </div>
-
       </div>
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="314095"></script>
     </footer>
   );
 }
