@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, Bookmark, Menu, X, Home, BookOpen, ChevronDown, Layers } from 'lucide-react';
+import { Search, bookmarks, Menu, X, Home, BookOpen, ChevronDown, Layers } from 'lucide-react';
 import { SITE_CONFIG } from '@/lib/config';
 
 export default function Navbar() {
@@ -100,8 +100,8 @@ export default function Navbar() {
           </div>
           {/* ----------------------------- */}
 
-          <Link href="/bookmark" className={`${isActive('/bookmark')} transition flex items-center gap-1`}>
-             <Bookmark size={16}/> Bookmark
+          <Link href="/bookmarks" className={`${isActive('/bookmarks')} transition flex items-center gap-1`}>
+             <bookmarks size={16}/> bookmarks
           </Link>
         </div>
 
@@ -156,8 +156,8 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                <Link href="/bookmark" onClick={() => setIsOpen(false)} className={`flex items-center gap-3 px-2 py-2 rounded-lg ${pathname === '/bookmarks' ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-gray-800'}`}>
-                    <Bookmark size={20} /> <span className="font-bold">Bookmark</span>
+                <Link href="/bookmarks" onClick={() => setIsOpen(false)} className={`flex items-center gap-3 px-2 py-2 rounded-lg ${pathname === '/bookmarkss' ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-gray-800'}`}>
+                    <bookmarks size={20} /> <span className="font-bold">bookmarks</span>
                 </Link>
             </div>
         </div>
