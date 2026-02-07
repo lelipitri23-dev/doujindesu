@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Facebook, Twitter, Instagram, Github, Heart } from 'lucide-react';
-import { SITE_CONFIG } from '@/lib/config'; // Import Config
+import { SITE_CONFIG } from '@/lib/config'; 
 
 export default function Footer() {
   return (
@@ -29,12 +29,12 @@ export default function Footer() {
             <div className="flex flex-col gap-2">
                 <h3 className="text-white font-bold mb-2 border-l-4 border-primary pl-3">TAUTAN</h3>
                 <Link href="/list" className="text-gray-400 hover:text-primary transition text-sm">Daftar Manga</Link>
-                <Link href="/type/manhwa" className="text-gray-400 hover:text-primary transition text-sm">Manhwa</Link>
-                <Link href="/type/manhua" className="text-gray-400 hover:text-primary transition text-sm">Manhua</Link>
-                <Link href="/type/doujinshi" className="text-gray-400 hover:text-primary transition text-sm">Doujinshi</Link>
+                <Link href="/list?type=Manhwa" className="text-gray-400 hover:text-primary transition text-sm">Manhwa</Link>
+                <Link href="/list?type=Manhua" className="text-gray-400 hover:text-primary transition text-sm">Manhua</Link>
+                <Link href="/list?type=Doujinshi" className="text-gray-400 hover:text-primary transition text-sm">Doujinshi</Link>
             </div>
 
-            {/* Kolom 3: Social & Support (YANG KAMU MINTA) */}
+            {/* Kolom 3: Social & Support */}
             <div>
                 <h3 className="text-white font-bold mb-4 border-l-4 border-primary pl-3">IKUTI KAMI</h3>
                 <div className="flex gap-4 mb-6">
@@ -68,7 +68,7 @@ export default function Footer() {
                         <Instagram size={20} />
                     </a>
 
-                    {/* Github (Opsional) */}
+                    {/* Github */}
                     <a 
                         href={SITE_CONFIG.socials.github} 
                         target="_blank" 
@@ -80,7 +80,7 @@ export default function Footer() {
                 </div>
                 
                 <p className="text-gray-500 text-xs">
-                    Email: support@{SITE_CONFIG.baseUrl.replace(/^https?:\/\//, '')}
+                    Email: support@{SITE_CONFIG.baseUrl.replace(/^https?:\/\//, '').split(':')[0]}
                 </p>
             </div>
         </div>
@@ -92,7 +92,6 @@ export default function Footer() {
             </p>
         </div>
       </div>
-      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="314095"></script>
     </footer>
   );
 }

@@ -3,59 +3,44 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 
 export default function MangaCard({ manga }) {
-  const thumb = manga.thumb || '/placeholder.jpg';
-  
-  // --- NORMALISASI DATA (Agar support API & Bookmark) ---
-  const type = manga.type || manga.metadata?.type || 'Manga';
-  const rating = manga.rating || manga.metadata?.rating || '?';
-  const status = manga.status || manga.metadata?.status || '';
-  
-  // Handle Chapter (Bookmark simpan sebagai last_chapter, API sebagai latestChapter)
-  const chapterData = manga.latestChapter || manga.last_chapter;
-  const chapterNum = chapterData?.chapter_index || chapterData?.title || '?';
+  if (!manga) return null;
 
   return (
-    <div className="group relative bg-card rounded-lg overflow-hidden hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 border border-gray-800">
-        <Link href={`/manga/${manga.slug}`}>
-            <div className="relative aspect-[3/4] overflow-hidden">
-                <Image 
-                    src={thumb} 
-                    alt={manga.title || 'Manga'} 
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    unoptimized 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {/* LABEL TYPE (Warna Dinamis) */}
-                <span className={`absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded text-white uppercase shadow-md
-                    ${type.toLowerCase() === 'manhwa' ? 'bg-green-600' : 
-                      type.toLowerCase() === 'manhua' ? 'bg-purple-600' : 
-                      'bg-primary'}
-                `}>
-                    {type}
-                </span>
-                
-                {/* LABEL RATING */}
-                <span className="absolute top-2 right-2 bg-yellow-500 text-black text-[10px] font-bold px-1.5 rounded flex items-center gap-1">
-                    <Star size={8} fill="black" /> {rating}
-                </span>
-            </div>
-        </Link>
+    <div className="group relative bg-card rounded-lg overflow-hidden border border-gray-800 hover:border-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
+      <Link href={`/manga/${manga.slug}`}>
+        <div className="relative aspect-[3/4] overflow-hidden">
+          {/* Badge Type */}
+          <span className="absolute top-2 left-2 z-10 bg-primary text-[10px] font-bold text-white px-2 py-0.5 rounded shadow uppercase">
+            {manga.metadata?.type || 'Manga'}
+          </span>
+          
+          {/* Badge Rating */}
+          <span className="absolute top-2 right-2 z-10 bg-black/70 backdrop-blur-sm text-[10px] font-bold text-yellow-400 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <Star size={10} fill="currentColor" /> {manga.metadata?.rating || 'N/A'}
+          </span>
 
-        <div className="p-3">
-            <Link href={`/manga/${manga.slug}`}>
-                <h3 className="text-white text-sm font-semibold line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-                    {manga.title}
-                </h3>
-            </Link>
-            
-            <div className="mt-3 flex justify-between items-center text-xs text-gray-400">
-                <span className="bg-darker px-2 py-1 rounded border border-gray-700">
-                   Ch. {chapterNum}
-                </span>
-            </div>
+          <Image
+            src={manga.thumb || '/placeholder.jpg'}
+            alt={manga.title}
+            fill
+            className="object-cover group-hover:scale-110 transition duration-500"
+            unoptimized // Wajib jika gambar dari external domain
+          />
+          
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80" />
         </div>
+
+        <div className="p-3 absolute bottom-0 w-full">
+          <h3 className="text-white text-sm font-bold leading-tight line-clamp-2 mb-1 group-hover:text-primary transition">
+            {manga.title}
+          </h3>
+          <div className="flex justify-between items-center text-[10px] text-gray-400">
+             <span>{manga.chapter_count ? `${manga.chapter_count} Chapter` : 'Update Baru'}</span>
+             <span className={`w-2 h-2 rounded-full ${manga.metadata?.status === 'Finished' ? 'bg-green-500' : 'bg-blue-500'}`}></span>
+          </div>
+        </div>
+      </Link>
     </div>
   );
 }

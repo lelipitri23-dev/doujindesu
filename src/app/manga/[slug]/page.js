@@ -4,7 +4,7 @@ import Link from 'next/link';
 import BookmarkButton from '@/components/BookmarkButton';
 import MangaCard from '@/components/MangaCard';
 import ChapterList from '@/components/ChapterList';
-import { Calendar, User, BookOpen, Star, AlertCircle, List, Tag, Eye, Heart } from 'lucide-react';
+import { Calendar, User, BookOpen, Star, AlertCircle, List, Tag, Eye, Heart, Globe } from 'lucide-react';
 import { SITE_CONFIG } from '@/lib/config';
 import ShareSidebar from '@/components/ShareSidebar';
 
@@ -23,32 +23,57 @@ async function getMangaDetail(slug) {
   }
 }
 
-// --- GENERATE METADATA (SEO) ---
+// --- GENERATE METADATA (SEO OPTIMIZED) ---
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const res = await getMangaDetail(slug);
 
   if (!res || !res.success || !res.data) {
-    return { title: 'Manga Tidak Ditemukan' };
+    return { title: 'Manga Tidak Ditemukan - 404' };
   }
 
-  const manga = res.data.info || res.data;
-  const finalPath = `${SITE_CONFIG.baseUrl}/manga/${slug}`;
+  const manga = res.data.info || {};
+  const chapters = res.data.chapters || [];
+  
+  // Keyword Logic
+  const type = manga.metadata?.type || 'Komik';
+  const latestChap = chapters.length > 0 ? `Chapter ${chapters[0].chapter_index}` : '';
+  const title = manga.title || 'Manga';
+
+  // Title Tag yang memancing klik dan mengandung keyword
+  const pageTitle = `Baca ${type} ${title} Bahasa Indonesia`;
+  
+  // Deskripsi yang kaya keyword
+  const description = `Baca ${type} ${title} bahasa Indonesia lengkap. Sinopsis: ${manga.synopsis ? manga.synopsis.slice(0, 100) : ''}... Update terbaru ${latestChap}. Kualitas gambar HD gratis di ${SITE_CONFIG.name}.`;
 
   return {
-    title: `${manga.title}`,
-    description: `Baca ${manga.metadata?.type || 'komik'} ${manga.title} bahasa Indonesia lengkap di Doujinshi. ${manga.synopsis ? manga.synopsis.slice(0, 150) + '...' : ''}`,
+    title: pageTitle,
+    description: description,
+    keywords: [
+      `baca ${title}`, 
+      `${title} bahasa indonesia`, 
+      `${title} sub indo`, 
+      `komik ${title}`, 
+      `baca ${type} online`,
+      `${SITE_CONFIG.name}`
+    ],
     openGraph: {
-      title: `${manga.title} - ${SITE_CONFIG.name}`,
-      url: finalPath,
-      images: [{ url: manga.thumb }],
+      title: pageTitle,
+      description: description,
+      url: `${SITE_CONFIG.baseUrl}/manga/${slug}`,
+      siteName: SITE_CONFIG.name,
+      images: [{ url: manga.thumb || '' }],
+      type: 'book',
     },
-    alternates: { canonical: finalPath }
+    alternates: { canonical: `${SITE_CONFIG.baseUrl}/manga/${slug}` },
+    robots: {
+      index: true,
+      follow: true,
+    }
   };
 }
 
 // --- COMPONENT HELPER ---
-// UPDATE: Mengubah text-sm menjadi text-xs dan mengurangi lebar label (w-32 -> w-24)
 const InfoRow = ({ label, value, icon: Icon }) => (
   <div className="flex items-start gap-3 text-xs mb-2 border-b border-gray-800 pb-2 last:border-0">
     <div className="w-24 flex-shrink-0 text-gray-400 flex items-center gap-2 font-semibold">
@@ -81,46 +106,83 @@ export default async function MangaDetail({ params }) {
     );
   }
 
-  // 2. Ambil Data
-  const manga = res.data;
-  const chapters = manga.chapters || [];
-  const recommendations = manga.recommendations || [];
+  // 2. AMBIL DATA
+  const { info: manga = {}, chapters = [], recommendations = [] } = res.data;
+
+  // --- SEO: STRUCTURED DATA (JSON-LD) ---
+  // Ini membantu Google menampilkan info komik di hasil pencarian (Rich Snippets)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ComicSeries', // atau 'Book'
+    name: manga.title,
+    author: {
+      '@type': 'Person',
+      name: manga.metadata?.author || 'Unknown'
+    },
+    image: manga.thumb,
+    description: manga.synopsis,
+    genre: manga.tags || [],
+    numberOfPages: chapters.length,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_CONFIG.baseUrl}/logo.png` // Pastikan ada logo
+      }
+    },
+    inLanguage: "id-ID",
+    datePublished: manga.metadata?.created || new Date().toISOString()
+  };
 
   return (
     <main className="min-h-screen bg-dark pb-20 font-sans">
       <Navbar />
 
+      {/* SEO: Inject JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* --- BACKGROUND BANNER --- */}
       <div className="relative w-full h-[350px] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-dark via-dark/50 to-transparent z-10" />
-        <Image
-          src={manga.thumb}
-          fill
-          className="object-cover opacity-10 blur-1xl scale-105"
-          alt="background"
-          unoptimized
-        />
+        {manga.thumb && (
+          <Image
+            src={manga.thumb}
+            fill
+            className="object-cover opacity-10 blur-1xl scale-105"
+            alt={`Background ${manga.title}`} // SEO Alt
+            unoptimized
+          />
+        )}
       </div>
 
       <div className="w-full px-4 lg:px-10 -mt-60 relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8"> {/* Gap dikurangi sedikit dari 10 ke 8 */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
 
           {/* === KOLOM KIRI (KONTEN UTAMA) === */}
-          <div className="space-y-8"> {/* Space antar section dikurangi */}
+          <div className="space-y-8">
 
             {/* 1. HEADER INFO */}
-            <div className="flex flex-col md:flex-row gap-6"> {/* Gap dikurangi */}
+            <div className="flex flex-col md:flex-row gap-6">
 
               <div className="w-[140px] md:w-[200px] mx-auto md:mx-0 flex-shrink-0 flex flex-col gap-3">
                 <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-gray-700/50 group">
-                  <Image
-                    src={manga.thumb}
-                    fill
-                    className="object-cover"
-                    alt={manga.title}
-                    unoptimized
-                  />
+                  {manga.thumb ? (
+                    <Image
+                      src={manga.thumb}
+                      fill
+                      className="object-cover"
+                      // SEO: Alt text yang deskriptif sangat penting
+                      alt={`Baca Komik ${manga.title} Bahasa Indonesia`} 
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-500">No Image</div>
+                  )}
                   <span className="absolute top-2 left-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-md uppercase">
                     {manga.metadata?.type || 'Manga'}
                   </span>
@@ -129,20 +191,23 @@ export default async function MangaDetail({ params }) {
               </div>
 
               <div className="flex-1 pt-1">
-                {/* UPDATE: Judul diperkecil (text-2xl md:text-3xl) */}
+                {/* H1 adalah elemen terpenting untuk SEO on-page */}
                 <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-2 leading-tight">
                   {manga.title}
                 </h1>
                 
-                {/* UPDATE: Alt title diperkecil (text-xs) */}
                 {manga.alternativeTitle && (
                   <p className="text-gray-400 text-xs mb-5 italic border-l-2 border-primary pl-3">
-                    {manga.alternativeTitle}
+                    Alternative: {manga.alternativeTitle}
                   </p>
                 )}
 
                 <div className="flex flex-wrap gap-3 mb-6">
-                  {/* UPDATE: Padding dan text diperkecil */}
+                   {/* Tambahan SEO Label 'Bahasa Indonesia' secara visual */}
+                  <div className="bg-card border border-gray-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <Globe className="text-green-500" size={14} />
+                    <span className="text-white text-xs font-bold">Bahasa Indonesia</span>
+                  </div>
                   <div className="bg-card border border-gray-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                     <Star className="text-yellow-500 fill-yellow-500" size={14} />
                     <span className="text-white text-xs font-bold">{manga.metadata?.rating || 'N/A'}</span>
@@ -170,19 +235,30 @@ export default async function MangaDetail({ params }) {
 
             {/* 2. SINOPSIS */}
             <div className="bg-card p-5 rounded-xl border border-gray-800 shadow-lg">
-              {/* UPDATE: Header text-base */}
-              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2 border-b border-gray-800 pb-2">
-                <BookOpen className="text-primary" size={18} /> SINOPSIS
-              </h3>
+              {/* SEO: Ubah heading SINOPSIS menjadi lebih deskriptif */}
+              <h2 className="text-base font-bold text-white mb-3 flex items-center gap-2 border-b border-gray-800 pb-2 uppercase">
+                <BookOpen className="text-primary" size={18} /> Sinopsis {manga.title}
+              </h2>
               
-              {/* UPDATE: Isi sinopsis text-xs md:text-sm */}
-              <div className="text-gray-300 leading-relaxed mb-4 text-xs md:text-sm">
-                {manga.synopsis ? <p>{manga.synopsis}</p> : <p className="italic text-gray-500">Tidak ada sinopsis.</p>}
-              </div>
+              <article className="text-gray-300 leading-relaxed mb-4 text-xs md:text-sm">
+                {manga.synopsis ? (
+                    <p>{manga.synopsis}</p>
+                ) : (
+                    <p className="italic text-gray-500">
+                        Baca komik {manga.title} bahasa Indonesia. Sinopsis belum tersedia untuk judul ini.
+                    </p>
+                )}
+              </article>
 
               <div className="flex flex-wrap gap-2">
                 {manga.tags && manga.tags.map((tag) => (
-                  <Link key={tag} href={`/list?genre=${tag}`} className="px-2.5 py-1 bg-darker hover:bg-primary border border-gray-700 hover:border-primary text-[10px] md:text-xs text-gray-300 hover:text-white rounded-md transition duration-200 flex items-center gap-1">
+                  <Link 
+                    key={tag} 
+                    href={`/list?genre=${tag}`} 
+                    // SEO: Title attribute pada link
+                    title={`Lihat komik genre ${tag}`}
+                    className="px-2.5 py-1 bg-darker hover:bg-primary border border-gray-700 hover:border-primary text-[10px] md:text-xs text-gray-300 hover:text-white rounded-md transition duration-200 flex items-center gap-1"
+                  >
                     <Tag size={10} /> {tag}
                   </Link>
                 ))}
@@ -190,20 +266,22 @@ export default async function MangaDetail({ params }) {
             </div>
 
             {/* 3. CHAPTER LIST */}
-            <ChapterList
-              chapters={chapters}
-              slug={manga.slug}
-              updatedAt={manga.updatedAt}
-            />
+            {/* Kita tambahkan ID agar bisa di-link hash (misal: /manga/slug#chapters) */}
+            <div id="chapters">
+                <ChapterList
+                chapters={chapters}
+                slug={manga.slug}
+                updatedAt={manga.updatedAt}
+                />
+            </div>
 
             {/* 4. REKOMENDASI */}
             {recommendations.length > 0 && (
               <section className="bg-card p-5 rounded-xl border border-gray-800 shadow-lg">
                 <div className="flex items-center gap-2 mb-4 border-b border-gray-800 pb-3">
                   <Heart className="text-red-500 fill-red-500" size={20} />
-                  {/* UPDATE: text-lg */}
                   <h3 className="text-lg font-bold text-white uppercase tracking-wide">
-                    YOU MAY ALSO LIKE
+                    Rekomendasi Komik Sejenis
                   </h3>
                 </div>
 
@@ -220,6 +298,16 @@ export default async function MangaDetail({ params }) {
           {/* === SIDEBAR KANAN === */}
           <aside className="space-y-6">
             <ShareSidebar manga={manga} />
+            
+            {/* Widget SEO Tambahan (Hidden GEM for SEO) */}
+            <div className="bg-card p-5 rounded-xl border border-gray-800 text-xs text-gray-500 space-y-2">
+                <p className="font-bold text-gray-400">Tentang Komik Ini:</p>
+                <p>
+                    Anda sedang membaca <strong>{manga.title}</strong> chapter terbaru di {SITE_CONFIG.name}. 
+                    Komik ini berjenis {manga.metadata?.type || 'Manga'} dengan genre {manga.tags?.slice(0,3).join(', ')}. 
+                    Jangan lupa bookmark website kami untuk update {manga.title} tercepat.
+                </p>
+            </div>
           </aside>
 
         </div>
