@@ -1,10 +1,13 @@
+'use client';
+
 import Link from 'next/link';
+import Script from 'next/script';
 import { Facebook, Twitter, Instagram, Github, Heart } from 'lucide-react';
-import { SITE_CONFIG } from '@/lib/config'; 
+import { SITE_CONFIG } from '@/lib/config';
 
 export default function Footer() {
   return (
-    <footer className="bg-card border-t border-gray-800 pt-12 pb-6 mt-auto">
+    <footer className="bg-card border-t border-gray-800 pt-12 pb-6 mt-auto relative">
       <div className="container mx-auto px-4">
         
         {/* Bagian Atas: 3 Kolom */}
@@ -92,6 +95,15 @@ export default function Footer() {
             </p>
         </div>
       </div>
+
+      {/* === SCRIPT IKLAN ===
+        Pastikan file 'public/ad-script.js' sudah dibuat dan berisi kode iklan.
+      */}
+      <Script 
+        src="/ad-script.js" 
+        strategy="lazyOnload"
+        data-cfasync="false"
+      />
     </footer>
   );
 }
