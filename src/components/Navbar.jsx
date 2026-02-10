@@ -101,7 +101,7 @@ export default function Navbar() {
           {/* ----------------------------- */}
 
           <Link href="/bookmarks" className={`${isActive('/bookmarks')} transition flex items-center gap-1`}>
-             <bookmarks size={16}/> bookmarks
+             <bookmarks size={16}/> Bookmarks
           </Link>
         </div>
 
@@ -157,7 +157,7 @@ export default function Navbar() {
                 </div>
 
                 <Link href="/bookmarks" onClick={() => setIsOpen(false)} className={`flex items-center gap-3 px-2 py-2 rounded-lg ${pathname === '/bookmarkss' ? 'bg-primary/10 text-primary' : 'text-gray-300 hover:bg-gray-800'}`}>
-                    <bookmarks size={20} /> <span className="font-bold">bookmarks</span>
+                    <bookmarks size={20} /> <span className="font-bold">Bookmarks</span>
                 </Link>
             </div>
         </div>
